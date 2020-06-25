@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# ARW specific
+test_notebooks/
+.vscode/
