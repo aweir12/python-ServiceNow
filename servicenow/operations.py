@@ -35,10 +35,13 @@ def _generate_batches(sn_instance, table_name, limit, reference_link):
     output = []
     counter = 0
     record_count = _get_table_count(sn_instance, table_name)
+    url = ("https://{}.service-now.com/api/now/table/{}"
+           "?sysparm_exclude_reference_link={}&sysparm_offset={}"
+           "&sysparm_limit={}")
 
     while counter < record_count:
-        query_string = sn_instance._table_url_construct(table_name, counter,
-                                                        limit, reference_link)
+        query_string = url.format(sn_instance.subdomain, table_name,
+                                  str(not reference_link), counter, limit)
         output.append(query_string)
         counter = counter + limit
     return output
@@ -55,7 +58,9 @@ def _get_table_count(sn_instance, table_name):
     table_name: str
         Table name to retrieve data from
     """
-    query_string = sn_instance._table_count_construct(table_name)
+    url = ("https://{}.service-now.com/api/now/v1/stats/{}"
+           "?sysparm_count=true")
+    query_string = url.format(sn_instance.subdomain, table_name)
     record_count = int(_get_data((sn_instance.api_user,
                        sn_instance.api_password, query_string))
                        ['result']['stats']['count'])
